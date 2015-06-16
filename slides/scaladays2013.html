@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>scala days 2013 roundup</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>				
+					<section>
+						<p style="font-size: 54px">Scala Days 2013</p>
+						<p>by Hung Lin <a href="http://twitter.com/hunglin" target="_blank">@hunglin</a></p>
+					</section>
+					<section>
+						<p style="font-size: 54px">Scala the **** out of NYC</p>
+						<ul>
+							<li>3 days event @ NYC</li>
+							<li>Scala Sunday @ meetup HQ: 8 talks</li>
+							<li>Shapeless workshop on Monday</li>
+						</ul>
+					</section>
+					<section>
+						<p style="font-size: 54px">Hot Topics</p>
+						<ul>
+							<li class="fragment roll-in">Scala 2.10</li>
+							<li class="fragment roll-in">Style of Scala*</li>
+							<li class="fragment roll-in">Asynchronous Programming - akka</li>
+							<li class="fragment roll-in">Big Data / Streaming Data - Spark</li>
+							<li class="fragment roll-in">Macro</li>
+							<li class="fragment roll-in">Play</li>
+						</ul>
+					</section>
+				</section>
+				<section>
+					<section>
+						<p style="font-size: 54px">Keynote: Scala with Style</p>
+						<p>by Martin Odersky, creator of scala</p>
+					</section>
+					<section>
+						<p style="font-size: 54px">What is OOP good for?</p>
+						<ul>
+							<li>Fixed APIs with unknown implementations. e.g. Simula67 for simulation, Smalltalk for GUI</li>
+							<li>Objects are characterized by <strike>state</strike>, <strike>identity</strike> and behavior - Grady Booch</li>
+						</ul>
+					</section>
+					<section>
+						<p style="font-size: 54px">OOP v.s. FP</p>
+						<img src="img/scaladays2013/oopvsfp.png" width="600">
+					</section>
+					<section>
+						<p style="font-size: 54px">Guideline #1 <br/> Keep it simple</p>
+						<p><a href="http://www.infoq.com/presentations/Simple-Made-Easy" target="_blank">Simple Made Easy - Rich Hichey</a></p>
+					</section>
+					<section>
+						<p style="font-size: 54px">Guideline #2 <br/> Don't pack too much in one expression</p>
+						<p>find meaningful names for the intermediate results.  It's not easy but it's important</p>
+					</section>
+					<section>
+						<p style="font-size: 54px">Guideline #3 <br/> Prefer Functional</p>
+						<ul>
+							<li>vals v.s. vars</li>
+							<li>recursions or combinators v.s. loops</li>
+							<li>immutable v.s. mutable collections</li>
+							<li>transformations v.s. CRUD*</li>
+						</ul>
+					</section>
+					<section>
+						<p style="font-size: 54px">Guideline #4 <br/> But, don't diabolize local state</p>
+						<ul>
+							<li>sometimes, mutable gives better performance</li>
+							<li>sometimes, mutable adds convenience</li>
+						</ul>
+					</section>
+					<section>
+						<p style="font-size: 54px">vars v.s. vals</p>
+						<pre><code contenteditable>
+var interfaces = parseClassHeader()...
+if (isAnnotation) interfaces += ClassFileAnnotation
+						</code></pre>
+						<pre><code contenteditable>
+val parsedIfaces = parseClassHeader()...
+val interfaces =
+  if (isAnnotation) parsedIfaces + ClassFileAnnotation
+  else parsedIfaces
+						</code></pre>
+					</section>
+					<section>
+						<p style="font-size: 54px">loops v.s. combinators</p>
+						<pre><code contenteditable>
+val totalPrice = items.map(_.price).sum
+val totalDiscount = items.map(_.discount).sum
+						</code></pre>
+					</section>
+					<section>
+						<pre><code contenteditable>
+val (totalPrice, totalDiscount) = 
+  items.foldLeft((0.0, 0.0)) {
+  	case ((tprice, tdiscount), item) => (tprice + item.price, tdiscount + item.discount)
+  }
+						</code></pre>
+						<pre><code contenteditable>
+var totalPrice, totalDiscount = 0.0
+for (item <- items) {
+  totalPrice += item.price
+  totalDiscount += item.discount
+}
+						</code></pre>
+					</section>
+					<section>
+						<p style="font-size: 54px">Guideline #5 <br/> Careful with mutable objects</p>
+						<pre><code contenteditable>
+val m = ArrayBuffer[Int]()	
+						</code></pre>
+					</section>
+					<section>
+						<p style="font-size: 54px">Guideline #6 <br/> Don't stop improving too early</p>
+						<ul>
+							<li>shrink code by factor of 10 + make it more readable at the same time</li>
+							<li>clean and elegant solutions don't come to mind at the first time</li>
+							<li><b style="font-size: 40px">it is fun to find better solutions</b></li>
+						</ul>
+					</section>
+					<section>
+						<p style="font-size: 54px">Choice #1 <br/> Infix v.s. "."</p>
+					</section>
+					<section>
+						<p style="font-size: 54px">Choice #2 <br/> Alphabetic v.s. Symbolic</p>
+						<pre><code contenteditable>
+val xs = List("apples", "oranges", "pears")
+
+xs.foldLeft("")((result, i) => result + i)
+
+("" /: xs)((result, i) => result + i)
+						</code></pre>
+						<img src="img/scaladays2013/list.png" width="250">
+					</section>
+					<section>
+						<p style="font-size: 54px">Choice #3 <br/> Loop, recursion or combinators</p>
+						<ul>
+							<li>try conbinators first</li>
+							<li>if it becomes too tedious, or efficiency is a big concern, try tail-recursion</li>
+							<li>use loop for simple case or for readability</li>
+						</ul>
+					</section>
+					<section>
+						<p style="font-size: 54px">Choice #4 <br/> Procedures or "="</p>
+						<p>DON'T use procedure syntax</p>
+						<pre><code contenteditable>
+def method: Unit = {
+  // operations
+}
+						</code></pre>
+					</section>
+					<section>
+						<p style="font-size: 54px">Choice #5 <br/> Private v.s. nested</p>
+						<ul>
+							<li>use nested function to avoid passing parameters</li>
+							<li>use nested function for small functions</li>
+							<li>don't nest too many levels</li>
+						</ul>
+					</section>
+					<section>
+						<p style="font-size: 54px">Choice #6 <br/> pattern matching v.s. dynamic dispatch</p>
+						<p>the expression problem, check out <a href="https://class.coursera.org/progfun-002/lecture/index" target="_blank">scala class @ coursera</a>, lecture 4.5 and 4.6</p>
+					</section>
+					<section>
+						<p style="font-size: 54px">Choice #7 <br/> type parameters v.s. abstract type members</p>
+						<p>
+							<a href="http://www.artima.com/weblogs/viewpost.jsp?thread=270195" target="_blank">a good article by Bill Venners</a>
+						</p>
+						<ul>
+							<li>try type parameters first</li>
+							<li>avoid Animals[_]</li>
+						</ul>
+					</section>
+				</section>
+				<section>
+					<section>
+						<p style="font-size: 54px">Keynote: Scala in 2018</p>
+						<p>by Rod Johnson, creator of Spring</p>
+					</section>
+					<section>
+						<p style="font-size: 54px">in 2018</p>
+						<ul>
+							<li class="fragment roll-in">Java is still alive</li>
+							<li class="fragment roll-in">Enterprise apps are using Scala</li>
+							<li class="fragment roll-in">Startups are still NOT using Scala</li>
+						</ul>
+					</section>
+					<section>
+						<p style="font-size: 54px">myths / points</p>
+						<ul>
+							<li class="fragment roll-in">Readability over cleverness, LOC, FP, ...</li>
+							<li class="fragment roll-in">Scala needs coding standard</li>
+							<li class="fragment roll-in">Scala needs to move slower</li>
+							<li class="fragment roll-in">Embracing instead of hating Java</li>
+						</ul>
+					</section>
+					<section>
+						<p>Any fool can write code that a computer can understand. Good programmers write code that human can understand. <br/>- Martin Fowler</p>
+					</section>
+					<section>
+						<p>Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it. <br/>- Brian Kernighan</p>
+					</section>
+				</section>
+				<section>
+					<section>
+						<p style="font-size: 54px">Asynchronous Programming</p>
+						<img src="img/scaladays2013/waitinginline.jpg" width="600">
+					</section>
+					<section>
+						<p style="font-size: 54px">asynchronous v.s. parallel</p>
+						<ul>
+							<li class="fragment roll-in">what else?</li>
+							<li class="fragment roll-in">who's doing it?</li>
+						</ul>
+					</section>
+					<section>
+						<p style="font-size: 54px">asynchronous v.s. batching</p>
+						<img src="img/scaladays2013/batch.png" width="600">
+					</section>
+					<section>
+						<p style="font-size: 54px">pitfall: thread pool?</p>
+						<p>for tomcat, one thread handles one request</p>
+					</section>
+					<section>
+						<p style="font-size: 54px">pitfall: back pressure</p>
+					</section>
+					<section>
+						<p style="font-size: 54px">pitfall: performance v.s. scaling issue</p>
+					</section>
+					<section>
+						<p style="font-size: 54px">pitfall: theory v.s. reality</p>
+						<ul>
+							<li>cost of thread context switch</li>
+							<li># of threads v.s. # of CPUs</li>
+							<li>where is the bottleneck?</li>
+						</ul>
+					</section>
+				</section>
+				<section>
+					<section>
+						<p style="font-size: 54px">Some <b style="font-size: 66px">thoughts</b> about our system</p>
+					</section>
+					<section>
+						<p style="font-size: 54px">Upgrade to scala 2.10</p>
+					</section>
+					<section>
+						<p style="font-size: 54px">Use akka</p>
+						<ul>
+							<li>asynchronous programming</li>
+							<li>fault tolerance</li>
+							<li>modular design</li>
+						</ul>
+					</section>
+					<section>
+						<p style="font-size: 54px">Use case class for data model</p>
+						<ul>
+							<li>treat data as map</li>
+						</ul>
+					</section>
+					<section>
+						<p style="font-size: 54px">Use finagle for service modules</p>
+						<ul>
+							<li class="fragment roll-in">play is not for REST API</li>
+							<li class="fragment roll-in">why pay the cost of HTTP?</li>
+							<li class="fragment roll-in">statistics</li>
+							<li class="fragment roll-in">separate REST and Data layer</li>
+							<li class="fragment roll-in">modularity</li>
+						</ul>
+					</section>
+				</section>
+				<section>
+					<p style="font-size: 54px">Questions?</p>
+				</section>
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					// { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>nescala 2014 roundup</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<p style="font-size: 54px">nescala 2014 roundup</p>
+					<p>by Hung Lin <a href="http://twitter.com/hunglin" target="_blank">@hunglin</a></p>
+				</section>
+				<section>
+					<p style="font-size: 54px">Who is @hunglin?</p>
+					<ul>
+						<li class="fragment roll-in">software engineer @ Audax Health</li>
+						<li class="fragment roll-in">use Scala for about 2.5 years now</li>
+						<li class="fragment roll-in">co-organizer of DC Scala meetup</li>
+						<li class="fragment roll-in">was Java coder before turned</li>
+						<li class="fragment roll-in">still trying to understand the gist of monad, macros, dependent types, ...</li>
+					</ul>
+				</section>
+				<section>
+					<section>
+						<p style="font-size: 54px">What is nescala?</p>
+						<ul>
+							<li class="fragment roll-in">nescala stands for North East Scala</li>
+							<li class="fragment roll-in">
+								every year around Feb/March time since 2011
+								<ul>
+									<li>2011 @ NYC</li>
+									<li>2012 @ Boston</li>
+									<li>2013 @ Philly</li>
+									<li>2014 @ NYC</li>
+								</ul>
+							</li>
+							<li class="fragment roll-in">
+								speakers are
+								<ul>
+									<li class="fragment roll-in">people from Typesafe</li>
+									<li class="fragment roll-in">people from academia like EPFL</li>
+									<li class="fragment roll-in">people from Twitter, Linkedin, Meetup, Tumblr, ...</li>
+									<li class="fragment roll-in">cool kids of Scala communities</li>
+								</ul>
+							</li>
+						</ul>
+					</section>
+					<section>
+						<p style="font-size: 54px">It's One of the Big Event in Scala Community</p>
+					</section>
+				</section>
+				<section>
+					<section>
+						<p style="font-size: 54px">nescala 2014</p>
+						<ul>
+							<li class="fragment roll-in">March 1-2, 2014</li>
+							<li class="fragment roll-in">
+								Day 1:
+								<ul>
+									<li>13 talks @ NYU</li>
+									<li>happy hours @ Foursquare HQ</li>
+								</ul>
+							</li>
+							<li class="fragment roll-in">
+								Day 2:
+								<ul>
+									<li>unconference @ Meetup HQ</li>
+								</ul>
+							</li>
+						</ul>
+					</section>
+					<section>
+						<p style="font-size: 54px">buzz words</p>
+						<ul>
+							<li class="fragment roll-in">Functional Programming</li>
+							<li class="fragment roll-in">Type System</li>
+							<li class="fragment roll-in">Scala Macros</li>
+							<li class="fragment roll-in">sbt</li>
+							<li class="fragment roll-in">streaming</li>
+							<li class="fragment roll-in">Programming Languages Concepts</li>
+							<li class="fragment roll-in">Finagle</li>
+						</ul>
+					</section>
+				</section>
+				<section>
+					<section>
+						<p style="font-size: 54px">1st talk: Scala's Type System</p>
+						by Heather Miller
+					</section>
+					<section>
+						<p style="font-size: 54px">what's Scala's Type System?</p>
+						<img class="fragment roll-in" src="img/nescala2014/scala_type_1.png" width="250">
+						<img class="fragment roll-in" src="img/nescala2014/scala_type_2.png" width="250">
+						<img class="fragment roll-in" src="img/nescala2014/scala_type_3.png" width="250">
+					</section>
+					<section>
+						<p style="font-size: 54px">abstract type members</p>
+						<pre><code contenteditable>
+trait Pet
+
+class Cat extends Pet
+
+class Person {
+  type Pet
+}
+
+class Susan extends Person {
+  type Pet = Cat
+}
+						</code></pre>
+					</section>
+					<section>
+						<pre><code contenteditable>						
+class Person[Pet]
+class Susan extends Person[Cat]
+						</code></pre>
+						<a href="http://www.artima.com/weblogs/viewpost.jsp?thread=270195" target="_blank">Abstract Type Members v.s. Generic Type Parameters by Bill Venners</a>
+					</section>
+					<section>
+						<p style="font-size: 54px">existential types</p>
+						<pre><code contenteditable>
+case class Fruit[T](val weight: Int, val tooRipe: T => Boolean)
+
+class Farm {
+  val fruit = new ArrayBuffer[Fruit[T] forSome { type T }]
+}
+						</code></pre>
+						<span class="fragment roll-in">you can leave some parts of your program <b style="font-size: 35px">unknown (unimplemented)</b></span><span class="fragment roll-in">, and still <b style="font-size: 35px">type check</b> it with different implementations for those unknown parts.</span>
+					</section>
+					<section>
+						<p style="font-size: 54px">higher-kinded types (container types, type constructor)</p>
+						<pre><code contenteditable>
+trait C[M[_]] {   }
+//C is higher-kinded type because it abstracts over type constructor M
+						</code></pre>
+					</section>
+					<section>
+						<p style="font-size: 54px">implementation of functor in Scala</p>
+						<pre><code contenteditable>
+  trait GenericFunctor[->>[_, _], ->>>[_, _], F[_]] {
+    def fmap[A, B](f: A ->> B): F[A] ->>> F[B]
+  }
+
+  trait Functor[F[_]] extends GenericFunctor[Function, Function, F] {
+    final def fmap[A, B](as: F[A])(f: A => B): F[B] =
+      fmap(f)(as)
+  }
+
+  trait Applicative[F[_]] extends Functor[F] {
+
+    def pure[A](a: A): F[A]
+
+    def apply[A, B](f: F[A => B]): F[A] => F[B]
+
+    final def apply[A, B](fa: F[A])(f: F[A => B]): F[B] =
+      apply(f)(fa)
+
+    override def fmap[A, B](f: A => B): F[A] => F[B] =
+      apply(pure(f))
+  }
+						</code></pre>
+						<span class="fragment roll-in">abstraction over abstractions</span>
+					</section>
+					<section>
+						<p style="font-size: 54px">typeclasses (it's so 2013)</p>
+						<pre class="fragment roll-in"><code contenteditable>
+// typeclass:
+trait Ordering[T] {
+  def compare(x: T, y: T): Int
+}
+						</code></pre>
+						<pre class="fragment roll-in"><code contenteditable>
+// typeclass instance:
+implicit object intOrdering extends Ordering[Int] {
+  def compare(x: T, y: T): Int = x - y
+}
+						</code></pre>
+						<pre class="fragment roll-in"><code contenteditable>
+// usage:
+def sort[T](s: Seq[T])(implicit evidence: Ordering[T]): Seq[T]
+						</code></pre>
+						<pre class="fragment roll-in"><code contenteditable>
+// use context bound to write less codes
+def sort[T: Ordering](s: Seq[T]): Seq[T]
+						</code></pre>
+						<span class="fragment roll-in">context bounds are type constructors, not types</span>
+					</section>
+					<section>
+						<p style="font-size: 54px">type level programming</p>
+						<p style="font-size: 72px" class="fragment roll-in">WAT?</p>
+						<p><span class="fragment roll-in">EPFL interview question<br/>(if you want to be Odersky's PhD student)</span></p>
+						<p><span class="fragment roll-in">please implement a map</span><span class="fragment roll-in">, using scala compiler</span></p>
+					</section>
+					<section>
+						<p class="fragment roll-in" style="font-size: 54px">let's define interface first:</p>
+						<ul class="fragment roll-in">
+							<li>input: types</li>
+							<li>output: types</li>
+						</ul>
+					</section>
+					<section>
+						<p class="fragment roll-in" style="font-size: 54px">how to do it?</p>
+						<ul class="fragment roll-in">
+							<li class="fragment roll-in">define type level functions</li>
+							<li class="fragment roll-in">apply those functions during type checking</li>
+						</ul>
+					</section>
+					<section>
+						<p style="font-size: 40px">use implicits for defining relations on types</p>
+						<pre><code contenteditable>
+class HasCapital[T <: Country, C <: City] {
+  def capital: C
+}
+
+implicit val capitalOfFrance = new HasCapital[France, Paris]
+implicit val capitalOfGermany = new HasCapital[Germany, Berlin]
+implicit val capitalOfUK = new HasCapital[UK, London]
+						</code></pre>
+					</section>
+					<section>
+						<p style="font-size: 54px">applying type level functions</p>
+						<pre><code contenteditable>
+def lookupCapital[T](implicit ic: HasCapital[T, C]): C = {
+  println(s"the capital is ${ic.capital.toString}")
+  ic.capital
+}
+
+val c = lookupCapital[France]
+						</code></pre>
+						<span class="fragment roll-in">CanBuildFrom use the same trick to compute the best result type of combinators like map</span>
+					</section>
+					<section>
+						<p style="font-size: 54px">dependent types <br/>(cool kids' buzz word of 2014)</p>
+						<ul>
+							<li class="fragment roll-in">Types that includes logical propositions, for example, type safe key value store.  The type of the key contains the type of the value.</li>
+							<li class="fragment roll-in">shapeless library (HList) by Miles Sabin</li>
+						</ul>
+					</section>
+					<section>
+						<p style="font-size: 54px">Odersky's talk @ strangeloop 2013 <a href="http://www.infoq.com/presentations/data-types-issues" target="_blank">The Trouble With Types</a></p>
+						
+					</section>
+					<section>
+						<p style="font-size: 54px">resources</p>
+						<ul>
+							<li><a href="http://www.artima.com/scalazine/articles/scalas%5Ftype%5Fsystem.html" target="_blank">The Purpose of Scala's Type System</a></li>
+							<li><a href="http://stackoverflow.com/questions/6246719/what-is-a-higher-kinded-type-in-scala" target="_blank">What is a higher kinded type in Scala?</a></li>
+							<li><a href="http://www.cs.uwm.edu/~boyland/fool2012/papers/fool2012_submission_3.pdf" target="_blank">DOT (Dependent Object Types)</a></li>
+							<li><a href="https://github.com/lampepfl/dotty" target="_blank">dotty</a></li>
+						</ul>
+					</section>
+				</section>
+				<section>
+					<section>
+						<p style="font-size: 54px">May Your Data Ever Be Coherent</p>
+						by Daniel Spiewak
+					</section>
+					<section>
+						<pre><code contenteditable>
+def sumPairs(left: List[Int], right: List[Int]): Int = {
+  if (left.isEmpty)
+    0
+  else
+    (left.head + right.head) + sumPairs(left.tail + right.tail)
+}
+						</code></pre>
+						<span class="fragment roll-in">data can be incoherent</span>
+					</section>
+					<section>
+						<pre><code contenteditable>
+def pairInts(x: List[Int], y: List[Int]): List[(Int, Int)] = ???
+
+def sumPairs(pairs: List[(Int, Int)]): Int = {
+  if (pairs.isEmpty)
+    0
+  else {
+    val (left, right) = pairs.head
+    left + right + sumPairs(pairs.tail)
+  }
+}
+						</code></pre>
+						<span class="fragment roll-in">code can be incoherent</span>
+					</section>
+					<section>
+						<pre><code contenteditable>
+def sumPairs(pairs: List[(Int, Int)]): Int = pairs match {
+  case (left, right) :: tail =>
+    left + right + sumPairs(tail)
+  case Nil => 0	
+}
+						</code></pre>
+						<span class="fragment roll-in">compiler checks the data and code coherence</span>
+					</section>
+					<section>
+						<p style="font-size: 54px">xs.length is bad and useless</p>
+						<span class="fragment roll-in">length explode one datum into two</span><br/>
+						<span class="fragment roll-in">how do you do merge sort?</span><br/>
+						<span class="fragment roll-in">how do you do matrix operation?</span>
+					</section>
+					<section>
+						<p style="font-size: 54px">take away:</p>
+						<ul>
+							<li class="fragment roll-in">constrain your representations</li>
+							<li class="fragment roll-in">focus on data flow, not control flow</li>
+							<li class="fragment roll-in">if you cannot constrain your data, constrain its origin (make it only come from one place</li>
+						</ul>
+					</section>
+				</section>
+				<section>
+					<section>
+						<p style="font-size: 54px">Summingbird</p>
+						by Oscar Boykin
+					</section>
+					<section>
+					</section>
+				</section>
+				<section>
+					<section>
+						<p style="font-size: 54px">Macros v.s. Types</p>
+						by Eugene Burmako
+					</section>
+					<section>
+					</section>
+				</section>
+				<section>
+					<section>
+						<p style="font-size: 54px">Functional Programming is Terrible</p>
+						by Runar Bjarnason
+					</section>
+					<section>
+					</section>
+				</section>
+				<section>
+					<section>
+						<p style="font-size: 54px">WartRemover</p>
+						by Brian McKenna
+					</section>
+					<section>
+					</section>
+				</section>
+				<section>
+					<section>
+						<p style="font-size: 54px">sbt 1.0</p>
+						by Josh Suereth
+					</section>
+					<section>
+					</section>
+				</section>
+				<section>
+					<p style="font-size: 54px">and more</p>
+					<ul>
+						<li class="fragment roll-in">Learning Scalaz by Eugene Yokota</li>
+						<li class="fragment roll-in">scalaz stream by Paul Chiusano</li>
+						<li class="fragment roll-in">Better Living Through sbt @ Banno by Luke Amdor</li>
+						<li class="fragment roll-in">GeoTrellis by Josh Marcus</li>
+						<li class="fragment roll-in">what you see is what you get by Doug Tangren</li>
+						<li class="fragment roll-in">Play2, Akka and WebSocket @ NYTimes by Victor Chan</li>
+					</ul>
+				</section>
+				<section>
+					<section>
+						<p style="font-size: 54px">Happy Hours @ Foursquare HQ</p>
+					</section>
+					<section>
+						<img src="img/nescala2014/midnight_in_paris.jpg" width="600">
+					</section>
+				</section>
+				<section>
+					<p style="font-size: 54px">Day2: Unconference</p>
+					<ul>
+						<li class="fragment roll-in">rethink Scala Macros by Eugene Burmako @ EPFL</li>
+						<li class="fragment roll-in">finagle by Moses Nakamura @ Twitter</li>
+						<li class="fragment roll-in">scalaz</li>
+						<li class="fragment roll-in">haskell</li>
+						<li class="fragment roll-in">new libraries</li>
+						<li class="fragment roll-in">new programming languages</li>
+						<li class="fragment roll-in">and a lot, a lot more</li>
+					</ul>
+						<span class="fragment roll-in"><a href="http://goo.gl/q09sSG" target="_blank">nescala 2014 unconference grid</a></span>
+				</section>
+				<section>
+					<section>
+						<p style="font-size: 54px">call for ACTIONS</p>
+						<ul>
+							<li class="fragment roll-in">We should participate</li>
+							<li class="fragment roll-in">We should give talks</li>
+							<li style="font-size: 60px" class="fragment roll-in">We should host</li>
+						</ul>
+					</section>
+					<section>
+						<ul>
+							<li>nescala 2011 @ NYC</li>
+							<li>nescala 2012 @ Boston</li>
+							<li>nescala 2013 @ Philly</li>
+							<li>nescala 2014 @ NYC</li>
+						</ul>
+						<p class="fragment roll-in" style="font-size: 72px">nescala 2015 @ DC</p>
+					</section>
+				</section>
+				<section>
+					<section>
+						<p style="font-size: 54px">Questions?</p>
+						<ul>
+							<li class="fragment roll-in">anyone going to Scala Days 2014 @ Berlin?</li>
+							<li class="fragment roll-in">anyone going to nescala 2015?</li>
+						</ul>					
+					</section>
+				</section>
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					// { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
